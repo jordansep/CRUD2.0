@@ -11,8 +11,8 @@ namespace CRUD2._0
     {
         static void Main(string[] args)
         {
-            string texto = Validate.Email();
-            Console.WriteLine(texto);
+            ManipulationPath.InitializePath("Contenedor", "Archivo.txt");
+
         }
     }
 }

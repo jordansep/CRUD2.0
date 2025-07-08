@@ -13,8 +13,8 @@ namespace CRUD2._0
         {
             ManipulationPath.InitializePath("Contenedor", "Archivo.txt");
             ArchiveManipulation nuevaDB = new ArchiveManipulation();
+            nuevaDB.OrderLines();
             nuevaDB.ShowLines();
-
 
         }
     }

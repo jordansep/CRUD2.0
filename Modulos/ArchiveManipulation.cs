@@ -21,7 +21,7 @@ internal class ArchiveManipulation
 
     // Ya que todos tendran ID, haremos que las clases creadas hereden este atributo
     public ArchiveManipulation() {
-        this.id = 0;
+        this.id = 1;
     }
 
     // Mostramos las lineas existentes en el archivo, con un formato predeterminado.
@@ -46,6 +46,21 @@ internal class ArchiveManipulation
             }
             Console.WriteLine();
         }
+    }
+    public void OrderLines()
+    {
+        Dictionary<int, string> Identificar = new Dictionary<int, string>();
+        foreach (var item in this.lines)
+        {
+            string[] separar = item.Split(';');
+            int.TryParse(separar[0], out int id);
+            Identificar.Add(id, string.Join(";", separar.Skip(1)));
+        }
+        // Nuevo diciconario con todo ordenado
+        Dictionary<int, string> ordenar = Identificar.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
+        // Array ordenado                               Vuelvo a unir la ID al Value, con el formato anterior.
+        string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
+        File.WriteAllLines(filePath, arrayOrdenado);
     }
     private int GetUniqueID()
     {

@@ -12,6 +12,9 @@ namespace CRUD2._0
         static void Main(string[] args)
         {
             ManipulationPath.InitializePath("Contenedor", "Archivo.txt");
+            ArchiveManipulation nuevaDB = new ArchiveManipulation();
+            nuevaDB.ShowLines();
+
 
         }
     }

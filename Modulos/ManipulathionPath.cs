@@ -16,6 +16,8 @@ class ManipulationPath
         directoryPath = Directory.GetCurrentDirectory();
         folderPath = Path.Combine(directoryPath, folderName);
         filePath = Path.Combine(folderPath, fileName);
+        if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+        if (!File.Exists(filePath)) File.Create(filePath);
     }
     public string GetFolderPath() => folderPath;
     public string GetFilePath() => filePath;

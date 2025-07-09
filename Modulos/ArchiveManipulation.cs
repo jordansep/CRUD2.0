@@ -8,6 +8,17 @@ using System.Threading.Tasks;
 
 internal class ArchiveManipulation
 {
+    // TODO: Registrar linea por linea 
+    // TODO: Leer Archivo --
+    // TODO: Ordenar por ID --
+    // TODO: NombrarArchivos
+    // TODO: Modificacion de datos 
+    // TODO: Eliminar por ID --
+    // TODO: Agregar datos 
+    // TODO: Sistema ID Unica. 
+    // TODO: Registrar usuarios.
+    // TODO: Cambiar el nombre del archivo --
+
     // Obtenemos los datos necesarios para comenzar a trabajar con archivos.
     private string folderPath = ManipulationPath.folderPath;
     private string filePath = ManipulationPath.filePath;
@@ -18,10 +29,35 @@ internal class ArchiveManipulation
     }
     // Todos los ejercicios me solicitan ID, ademas siempre es bueno tener un identificador unico
     private int id;
-
+    private Dictionary<int, string> DiccionarioLineas = new Dictionary<int, string>();
     // Ya que todos tendran ID, haremos que las clases creadas hereden este atributo
     public ArchiveManipulation() {
         this.id = 1;
+        LlenarDiccionario();
+    }
+
+    // Este metodo funciona, pero para pedir datos especificos como por ej: Email, Numeros, no podra ser validado desde aqui.
+    // Por lo tanto tendremos que sobreescribirlo en las subclases
+    public void AddRegister(int cantDatos)
+    {
+        // Sumamos uno ya que la ID ya esta contada.
+        cantDatos += 1;
+        // Inicializamos con un array de tamaño cantDatos
+        string[] registro = new string[cantDatos];
+        // El primer dato es la ID asi que no la pedimos
+        // mientras que los siguientes datos los tendra que ingresar el usuario.
+        for (int i = 0; i < registro.Length; i++) { 
+            if (i == 0) { registro[i] = GetUniqueID().ToString(); }
+            if (i != 0) { registro[i] = Validate.Texto();}
+        }
+        string newLine = string.Join(";", registro);
+        File.AppendAllText(this.filePath, newLine + Environment.NewLine);
+    }
+    // Cambia el nombre del archivo.
+    public void ChangeFileName(string newName)
+    {
+        File.Move(filePath, Path.Combine(folderPath, newName));
+        this.filePath = Path.Combine(folderPath, newName);
     }
 
     // Mostramos las lineas existentes en el archivo, con un formato predeterminado.
@@ -36,35 +72,61 @@ internal class ArchiveManipulation
             }
             string[] datos = this.lines[i].Split(';');
             // Daremos formato sin importar cuantos datos sean guardados en las lineas.
-            for (int j = 0; j < datos.Length; j++) { 
-                if (j == 0) { 
-                    Console.Write($"ID: {datos[j]} - ");
-                    int.TryParse( datos[j], out this.id );
-                }
-                else if(j == datos.Length - 1) { Console.Write(datos[j]);}
+            for (int j = 0; j < datos.Length; j++) {
+                if (j == 0) Console.Write($"ID: {datos[j]} - "); 
+                else if(j == datos.Length - 1) Console.Write(datos[j]);
                 else Console.Write(datos[j] + " - ");
             }
             Console.WriteLine();
         }
     }
-    public void OrderLines()
+    // Llena un diccionario que luego sera usado
+    // para operaciones donde necesitemos buscar usuarios por ID.
+    private void LlenarDiccionario()
     {
-        Dictionary<int, string> Identificar = new Dictionary<int, string>();
+        // Si lines[] esta vacio entonces termina la ejecucion para evitar problemas
+        if (lines == null || !lines.Any()) return; 
         foreach (var item in this.lines)
         {
             string[] separar = item.Split(';');
+            // intentamos parsear a int el primer elemento en separar[], si se puede devolvemos int id
             int.TryParse(separar[0], out int id);
-            Identificar.Add(id, string.Join(";", separar.Skip(1)));
+            // Añadimos la ID como key al diccionario y
+            // luego volvemos a conectar los strings al array saltandonos la ID para pasarselo al Value
+            this.DiccionarioLineas.Add(id, string.Join(";", separar.Skip(1)));
         }
+    }
+
+    // Ordena las lineas por ID
+    public void OrderLines()
+    {
         // Nuevo diciconario con todo ordenado
-        Dictionary<int, string> ordenar = Identificar.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
+        Dictionary<int, string> ordenar = this.DiccionarioLineas.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
         // Array ordenado                               Vuelvo a unir la ID al Value, con el formato anterior.
         string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
         File.WriteAllLines(filePath, arrayOrdenado);
     }
+    // Elimina registros por ID
+    public void EliminarID(int id)
+    {
+        // Remueve donde este la ID pasada por el usuario
+        this.DiccionarioLineas.Remove(id);
+        // Vuelve a convertir el diccionario en array con el formato anterior
+        string[] array = this.DiccionarioLineas.Select(x => $"{x.Key};{x.Value}").ToArray();
+        File.WriteAllLines(filePath, array);
+    }
+
+    // Obtiene una ID unica,
+    // Sí borramos un registro esa ID ahora sera utilizable para el siguiente registro añadido
+    // Asi evitamos tener saltos de ID en caso de borrar registros.
     private int GetUniqueID()
     {
-        return this.id++;
+        // Mientras el diccionario contenga la ID entonces ID + 1
+        while (DiccionarioLineas.ContainsKey(this.id)) {
+            this.id++;
+        }
+        // Retornamos cuando encuentre una ID disponible.
+        return this.id;
     }
     
 }

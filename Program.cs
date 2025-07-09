@@ -13,9 +13,21 @@ namespace CRUD2._0
         {
             ManipulationPath.InitializePath("Contenedor", "Archivo.txt");
             ArchiveManipulation nuevaDB = new ArchiveManipulation();
-            nuevaDB.OrderLines();
             nuevaDB.ShowLines();
-
+            Console.WriteLine("1) Eliminar por ID");
+            Console.WriteLine("2) Agregar Registro");
+            Console.WriteLine("6) Ordenar Registros por ID");
+            int opciones = Validate.Entero("Ingrese una opcion");
+            switch (opciones)
+            {
+                case 1: nuevaDB.EliminarID(Validate.Entero("Ingrese la ID.")); 
+                    break;
+                case 2: nuevaDB.AddRegister(Validate.Entero("Cuantos datos necesitas? (Sin contar el campo: ID)"));
+                    break;
+                case 6: nuevaDB.OrderLines();
+                    break;
+            }
+            
         }
     }
 }

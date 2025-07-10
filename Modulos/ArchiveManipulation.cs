@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,17 +61,20 @@ internal class ArchiveManipulation
     public void ShowLines()
     {
 
+        if (this.lines == null) { return; }
         for (int i = 0; i < this.lines.Length; i++)
         {
-            if (this.lines[i] == null) {
+            if (this.lines[i] == null)
+            {
                 Console.WriteLine(this.lines[i]);
                 Console.WriteLine("Quisiera agregar alguna?");
             }
             string[] datos = this.lines[i].Split(';');
             // Daremos formato sin importar cuantos datos sean guardados en las lineas.
-            for (int j = 0; j < datos.Length; j++) {
-                if (j == 0) Console.Write($"ID: {datos[j]} - "); 
-                else if(j == datos.Length - 1) Console.Write(datos[j]);
+            for (int j = 0; j < datos.Length; j++)
+            {
+                if (j == 0) Console.Write($"ID: {datos[j]} - ");
+                else if (j == datos.Length - 1) Console.Write(datos[j]);
                 else Console.Write(datos[j] + " - ");
             }
             Console.WriteLine();
@@ -114,13 +118,36 @@ internal class ArchiveManipulation
         File.WriteAllLines(filePath, array);
     }
     // Ordena las lineas por ID
-    public void OrderLines()
+    public void OrderLinesByID()
     {
         // Nuevo diciconario con todo ordenado
         Dictionary<int, string> ordenar = this.DiccionarioLineas.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
         // Array ordenado                               Vuelvo a unir la ID al Value, con el formato anterior.
         string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
         File.WriteAllLines(filePath, arrayOrdenado);
+    }
+    public void OrderLinesByAlphabetic()
+    {
+        Console.WriteLine("1) Orden Alfabetico Ascendente");
+        Console.WriteLine("2) Orden Alfabetico Descendente");
+        int op = Validate.Entero(1,2,"Ingrese una opcion");
+        Dictionary<int, string> ordenar;
+        if (op == 1) {
+            ordenar =this.DiccionarioLineas.OrderBy(x => x.Value.ToLower()).ToDictionary(x => x.Key, y => y.Value);
+        } 
+        else{ 
+            ordenar = this.DiccionarioLineas.OrderByDescending(x => x.Value.ToLower()).ToDictionary(x => x.Key, y => y.Value);
+        }
+        string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
+        File.WriteAllLines(filePath, arrayOrdenado);
+    }
+    public void OrderLines()
+    {
+        Console.WriteLine("1) Ordenar por ID");
+        Console.WriteLine("2) Ordenar Alfabeticamente");
+        int op = Validate.Entero(1, 2, "Ingrese una opcion");
+        if (op == 1) { OrderLinesByID(); }
+        else OrderLinesByAlphabetic();
     }
     // Modifica un registro especificado por el usuario segun su ID.
     public void ModifyRegisterByID(int id)

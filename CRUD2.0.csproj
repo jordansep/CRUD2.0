@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Modulos\ArchiveManipulation.cs" />
     <Compile Include="Modulos\ManipulathionPath.cs" />
+    <Compile Include="Modulos\subClases\Class1.cs" />
     <Compile Include="Modulos\Validate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

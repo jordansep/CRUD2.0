@@ -125,10 +125,10 @@ using System.Threading.Tasks;
             } while (!esN);
             return numero;
         }
-        public static string Email(string msg = "Ingrese su email.")
+        public static string Email(string msg = "Ingrese su email")
         {
         string reg = @"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$";
-        Regex policiaDelMail = new Regex(reg);
+        Regex policiaDelMail = new Regex(reg, RegexOptions.IgnoreCase);
         string email = "";
         bool esMail = false;
         do
@@ -137,13 +137,14 @@ using System.Threading.Tasks;
                 email = Console.ReadLine();
             try
             {
-                if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException($"El directorio no puede ser nulo");
+                if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException($"El email no puede ser nulo");
                 
                 if (policiaDelMail.IsMatch(email))
                 {
                     esMail = true;
+                    
                 }
-                Console.WriteLine("El mail debe contener (alfanumerico@texto.texto)");
+                else Console.WriteLine("El mail debe contener (alfanumerico@texto.texto)");
 
             }
             catch (FormatException)
@@ -151,7 +152,7 @@ using System.Threading.Tasks;
                 Console.WriteLine($"Error en el formato {email}");
             }
             catch (ArgumentNullException) { }
-            catch (Exception e) { Console.WriteLine("Email Invalido"); }
+            catch (Exception) { Console.WriteLine("Email Invalido"); }
 
             } while (!esMail);
             return email;

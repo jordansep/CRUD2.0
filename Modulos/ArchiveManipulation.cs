@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 internal class ArchiveManipulation
@@ -15,40 +16,58 @@ internal class ArchiveManipulation
     // Ej: al poner 4 datos, especificar que tipo de datos van a recibir cada uno
     // Nombre(string): Jordan, Email(email): jordanmonier4@gmail.com, edad(numero): 24
     // Entonces al modificar los datos, pedir el tipo de dato necesario.
-
     // Obtenemos los datos necesarios para comenzar a trabajar con archivos.
-    private string folderPath = ManipulationPath.folderPath;
-    private string filePath = ManipulationPath.filePath;
+    protected string folderPath = ManipulationPath.folderPath;
+    protected string filePath = ManipulationPath.filePath;
     // Las lineas se agregaran en formato |id;dato;dato;dato;dato|
-    private string[] lines
+    protected string[] lines
     {
         get { return File.ReadAllLines(filePath); }
     }
     // Todos los ejercicios me solicitan ID, ademas siempre es bueno tener un identificador unico
     private int id;
     private Dictionary<int, string> DiccionarioLineas = new Dictionary<int, string>();
-    // Ya que todos tendran ID, haremos que las clases creadas hereden este atributo
-    public ArchiveManipulation() {
-        this.id = 1;
+    private string[] DataTipes;
+    public ArchiveManipulation(string DataTipes) {
+        this.DataTipes = DataTipes.ToLower().Split(',');
         LlenarDiccionario();
+
     }
 
     // Este metodo funciona, pero para pedir datos especificos como por ej: Email, Numeros, no podra ser validado desde aqui.
     // Por lo tanto tendremos que sobreescribirlo en las subclases
-    public void AddRegister(int cantDatos)
+    public void AddRegister()
     {
         // Sumamos uno ya que la ID ya esta contada.
-        cantDatos += 1;
         // Inicializamos con un array de tamaño cantDatos
-        string[] registro = new string[cantDatos];
+        string[] registro = new string[this.DataTipes.Length + 1];
         // El primer dato es la ID asi que no la pedimos
+        registro[0] = GetUniqueID().ToString();
         // mientras que los siguientes datos los tendra que ingresar el usuario.
-        for (int i = 0; i < registro.Length; i++) { 
-            if (i == 0) { registro[i] = GetUniqueID().ToString(); }
-            if (i != 0) { registro[i] = Validate.Texto();}
+
+        for (int i = 0; i < this.DataTipes.Length; i++)
+        {
+                string currentDateTipe = this.DataTipes[i].Trim();
+                switch (currentDateTipe)
+                {
+                    case "nombre":
+                        registro[i + 1] = Validate.Texto("Ingrese el nombre");
+                        break;
+                    case "email":
+                        registro[i + 1] = Validate.Email("Ingrese el email");
+                        break;
+                    case "entero":
+                        registro[i + 1] = Validate.Entero("Ingrese un numero").ToString();
+                        break;
+                    case "edad":
+                        registro[i + 1] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
+                        break;
+                    default: registro[i + 1] = Validate.Texto("Estamos aca"); 
+                        break;
+                }
         }
-        string newLine = string.Join(";", registro);
-        File.AppendAllText(this.filePath, newLine + Environment.NewLine);
+            string newLine = string.Join(";", registro);
+            File.AppendAllText(this.filePath, newLine + Environment.NewLine);
     }
     // Cambia el nombre del archivo.
     public void ChangeFileName(string newName)
@@ -82,7 +101,7 @@ internal class ArchiveManipulation
     }
     // Llena un diccionario que luego sera usado
     // para operaciones donde necesitemos buscar usuarios por ID.
-    private void LlenarDiccionario()
+    protected void LlenarDiccionario()
     {
         // Si lines[] esta vacio entonces termina la ejecucion para evitar problemas
         if (lines == null || !lines.Any()) return; 
@@ -99,7 +118,7 @@ internal class ArchiveManipulation
     // Obtiene una ID unica,
     // Sí borramos un registro esa ID ahora sera utilizable para el siguiente registro añadido
     // Asi evitamos tener saltos de ID en caso de borrar registros.
-    private int GetUniqueID()
+    protected int GetUniqueID()
     {
         // Mientras el diccionario contenga la ID entonces ID + 1
         while (DiccionarioLineas.ContainsKey(this.id)) {
@@ -126,6 +145,7 @@ internal class ArchiveManipulation
         string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
         File.WriteAllLines(filePath, arrayOrdenado);
     }
+    // Ordenar registros Alfabeticamente.
     public void OrderLinesByAlphabetic()
     {
         Console.WriteLine("1) Orden Alfabetico Ascendente");
@@ -156,11 +176,38 @@ internal class ArchiveManipulation
         string registro = this.DiccionarioLineas[id];
         string[] datos = registro.Split(';');
         // Imprime para mostrarlo como opciones
-        for (int i = 0; i < datos.Length; i++) {
-            Console.WriteLine($"{i + 1}) {datos[i]} ");
+        if (datos.Length < this.DataTipes.Length)
+        {
+            Array.Resize(ref datos, this.DataTipes.Length);
         }
-        int op = Validate.Entero("Que dato desea modificar?") - 1;
-        datos[op] = Validate.Texto("Ingrese el nuevo valor");
+        for (int i = 0; i < this.DataTipes.Length; i++) {
+            if (datos[i] == null)
+            {
+                Console.WriteLine($"{i + 1}) {this.DataTipes[i]}");
+            }
+            else Console.WriteLine($"{i + 1}) {datos[i]} ");
+        }
+
+        int op = Validate.Entero(1,this.DataTipes.Length,"Que dato desea modificar?") - 1;
+            string currentDateTipe = this.DataTipes[op].Trim();
+            switch (currentDateTipe)
+            {
+                case "nombre":
+                    datos[op] = Validate.Texto("Ingrese el nombre");
+                    break;
+                case "email":
+                    datos[op] = Validate.Email("Ingrese el email");
+                    break;
+                case "entero":
+                    datos[op] = Validate.Entero("Ingrese un numero").ToString();
+                    break;
+                case "edad":
+                    datos[op] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
+                    break;
+                default:
+                    datos[op] = Validate.Texto("Estamos aca");
+                    break;
+            }
         registro = string.Join(";", datos);
         this.DiccionarioLineas[id] = registro;
         // Actualizo el registro.

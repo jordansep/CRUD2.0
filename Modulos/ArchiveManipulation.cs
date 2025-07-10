@@ -8,16 +8,12 @@ using System.Threading.Tasks;
 
 internal class ArchiveManipulation
 {
-    // TODO: Registrar linea por linea 
-    // TODO: Leer Archivo --
-    // TODO: Ordenar por ID --
     // TODO: NombrarArchivos
-    // TODO: Modificacion de datos 
-    // TODO: Eliminar por ID --
-    // TODO: Agregar datos 
-    // TODO: Sistema ID Unica. 
-    // TODO: Registrar usuarios.
-    // TODO: Cambiar el nombre del archivo --
+    // TODO: Modificacion de datos --
+    // TODO: Tipos de datos que reciben.
+    // Ej: al poner 4 datos, especificar que tipo de datos van a recibir cada uno
+    // Nombre(string): Jordan, Email(email): jordanmonier4@gmail.com, edad(numero): 24
+    // Entonces al modificar los datos, pedir el tipo de dato necesario.
 
     // Obtenemos los datos necesarios para comenzar a trabajar con archivos.
     private string folderPath = ManipulationPath.folderPath;
@@ -96,26 +92,6 @@ internal class ArchiveManipulation
             this.DiccionarioLineas.Add(id, string.Join(";", separar.Skip(1)));
         }
     }
-
-    // Ordena las lineas por ID
-    public void OrderLines()
-    {
-        // Nuevo diciconario con todo ordenado
-        Dictionary<int, string> ordenar = this.DiccionarioLineas.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
-        // Array ordenado                               Vuelvo a unir la ID al Value, con el formato anterior.
-        string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
-        File.WriteAllLines(filePath, arrayOrdenado);
-    }
-    // Elimina registros por ID
-    public void EliminarID(int id)
-    {
-        // Remueve donde este la ID pasada por el usuario
-        this.DiccionarioLineas.Remove(id);
-        // Vuelve a convertir el diccionario en array con el formato anterior
-        string[] array = this.DiccionarioLineas.Select(x => $"{x.Key};{x.Value}").ToArray();
-        File.WriteAllLines(filePath, array);
-    }
-
     // Obtiene una ID unica,
     // Sí borramos un registro esa ID ahora sera utilizable para el siguiente registro añadido
     // Asi evitamos tener saltos de ID en caso de borrar registros.
@@ -127,6 +103,42 @@ internal class ArchiveManipulation
         }
         // Retornamos cuando encuentre una ID disponible.
         return this.id;
+    }
+    // Elimina registros por ID
+    public void EliminarID(int id)
+    {
+        // Remueve donde este la ID pasada por el usuario
+        this.DiccionarioLineas.Remove(id);
+        // Vuelve a convertir el diccionario en array con el formato anterior
+        string[] array = this.DiccionarioLineas.Select(x => $"{x.Key};{x.Value}").ToArray();
+        File.WriteAllLines(filePath, array);
+    }
+    // Ordena las lineas por ID
+    public void OrderLines()
+    {
+        // Nuevo diciconario con todo ordenado
+        Dictionary<int, string> ordenar = this.DiccionarioLineas.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
+        // Array ordenado                               Vuelvo a unir la ID al Value, con el formato anterior.
+        string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
+        File.WriteAllLines(filePath, arrayOrdenado);
+    }
+    // Modifica un registro especificado por el usuario segun su ID.
+    public void ModifyRegisterByID(int id)
+    {
+        // Trae el registro relacionado al ID
+        string registro = this.DiccionarioLineas[id];
+        string[] datos = registro.Split(';');
+        // Imprime para mostrarlo como opciones
+        for (int i = 0; i < datos.Length; i++) {
+            Console.WriteLine($"{i + 1}) {datos[i]} ");
+        }
+        int op = Validate.Entero("Que dato desea modificar?") - 1;
+        datos[op] = Validate.Texto("Ingrese el nuevo valor");
+        registro = string.Join(";", datos);
+        this.DiccionarioLineas[id] = registro;
+        // Actualizo el registro.
+        string[] registroActualizado = DiccionarioLineas.Select(x => $"{x.Key};{x.Value}").ToArray();
+        File.WriteAllLines(filePath, registroActualizado);
     }
     
 }

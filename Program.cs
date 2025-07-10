@@ -16,6 +16,7 @@ namespace CRUD2._0
             nuevaDB.ShowLines();
             Console.WriteLine("1) Eliminar por ID");
             Console.WriteLine("2) Agregar Registro");
+            Console.WriteLine("3) Modificar Registro");
             Console.WriteLine("6) Ordenar Registros por ID");
             int opciones = Validate.Entero("Ingrese una opcion");
             switch (opciones)
@@ -23,6 +24,8 @@ namespace CRUD2._0
                 case 1: nuevaDB.EliminarID(Validate.Entero("Ingrese la ID.")); 
                     break;
                 case 2: nuevaDB.AddRegister(Validate.Entero("Cuantos datos necesitas? (Sin contar el campo: ID)"));
+                    break;
+                case 3: nuevaDB.ModifyRegisterByID(Validate.Entero("Ingrese la ID donde desea modificar los datos"));
                     break;
                 case 6: nuevaDB.OrderLines();
                     break;

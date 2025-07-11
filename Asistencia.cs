@@ -85,14 +85,44 @@ class Asistencia : ArchiveManipulation, IAsistencia
         File.WriteAllLines(this.filePath, secondFileLines);
         Console.WriteLine("\n--- Asistencia tomada correctamente ---");
     }
-     public void Mostrar(Asistencia dataBase)
+    public void ShowLines(string specificDate)
     {
+        string datePath = Path.Combine(this.folderPath, specificDate + ".txt");
+        if (!File.Exists(datePath))
+        {
+            Console.WriteLine("No se ha tomado asistencia en esa fecha");
+            return;
+        }
+        string[] dateLines = File.ReadAllLines(datePath);
+        if (dateLines == null) { return; }
+        for (int i = 0; i < dateLines.Length; i++)
+        {
+            if (dateLines[i] == null)
+            {
+                Console.WriteLine(dateLines[i]);
+                Console.WriteLine("Quisiera agregar alguna?");
+            }
+            string[] datos = dateLines[i].Split(';');
+            // Daremos formato sin importar cuantos datos sean guardados en las lineas.
+            for (int j = 0; j < datos.Length; j++)
+            {
+                if (j == 0) Console.Write($"ID: {datos[j]} - ");
+                else if (j == datos.Length - 1) Console.Write(datos[j]);
+                else Console.Write(datos[j] + " - ");
+            }
+            Console.WriteLine();
+        }
+    }
+    public void Mostrar(Asistencia dataBase)
+    {
+        Console.WriteLine($"Registro de Asistencias del dia {DateTime.UtcNow.ToString("yyyy-MM-dd")}");
         dataBase.ShowLines();
         Console.WriteLine("1) Eliminar por ID");
         Console.WriteLine("2) Agregar Registro");
         Console.WriteLine("3) Tomar Asistencia");
         Console.WriteLine("4) Modificar Registro");
-        Console.WriteLine("5) Ordenar Registros ");
+        Console.WriteLine("5) Buscar registro de asistencias en una fecha.");
+        Console.WriteLine("6) Ordenar Registros ");
         int opciones = Validate.Entero("Ingrese una opcion");
         switch (opciones)
         {
@@ -108,7 +138,9 @@ class Asistencia : ArchiveManipulation, IAsistencia
             case 4:
                 dataBase.ModifyRegisterByID(Validate.Entero("Ingrese la ID donde desea modificar los datos"));
                 break;
-            case 5: dataBase.OrderLines(); break;
+            case 5: ShowLines(Validate.Fecha()); 
+                break;
+            case 6: dataBase.OrderLines(); break;
         }
     }
 }

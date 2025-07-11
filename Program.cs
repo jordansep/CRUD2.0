@@ -13,6 +13,7 @@ namespace CRUD2._0
         static void Main(string[] args)
         {
             EjCatorce();
+            // Validate.Fecha();
         }
         public static void EjOnce()
         {
@@ -29,12 +30,11 @@ namespace CRUD2._0
         public static void EjTrece()
         {
             ManipulationPath.InitializePath("Inventario", "inventario.csv");
-            ArchiveManipulation Trece = new ArchiveManipulation("texto,precio,stock");
+            ArchiveManipulation Trece = new ArchiveManipulation("nombre,precio,stock");
             Mostrar(Trece);
         }
         public static void EjCatorce()
         {
-            Console.WriteLine($"Registro de Asistencias del dia {DateTime.UtcNow.ToString("yyyy-MM-dd")}");
             ManipulationPath.InitializePath("Asistencias", $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt", "Alumnos.txt");
             Asistencia Catorce = new Asistencia("nombre,asistencia");
             Catorce.Mostrar(Catorce);

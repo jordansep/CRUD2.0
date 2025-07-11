@@ -10,12 +10,6 @@ using System.Threading.Tasks;
 
 internal class ArchiveManipulation
 {
-    // TODO: NombrarArchivos
-    // TODO: Modificacion de datos --
-    // TODO: Tipos de datos que reciben. --
-    // Ej: al poner 4 datos, especificar que tipo de datos van a recibir cada uno
-    // Nombre(string): Jordan, Email(email): jordanmonier4@gmail.com, edad(numero): 24
-    // Entonces al modificar los datos, pedir el tipo de dato necesario.
 
     // Obtenemos los datos necesarios para comenzar a trabajar con archivos.
     protected string folderPath = ManipulationPath.folderPath;
@@ -59,6 +53,9 @@ internal class ArchiveManipulation
                     case "email":
                         registro[i + 1] = Validate.Email("Ingrese el email");
                         break;
+                    case "nota":
+                        registro[i + 1] = Validate.Flotante(1.0f, 10, "Ingrese la nota").ToString();
+                        break;
                     case "entero":
                         registro[i + 1] = Validate.Entero("Ingrese un numero").ToString();
                         break;
@@ -66,13 +63,16 @@ internal class ArchiveManipulation
                         registro[i + 1] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
                         break;
                     case "precio":
-                        registro[i + 1] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
+                        registro[i + 1] = Validate.Flotante(0.0f, 99999.0f, "Ingrese el precio del producto").ToString();
                         break;
                     case "stock":
-                        registro[i + 1] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
+                        registro[i + 1] = Validate.Entero(0, 9999999, "Ingrese la cantidad de stock del producto").ToString();
                         break;
                     case "asistencia": 
                         registro[i + 1] ="Ausente"; 
+                        break;
+                    case "estado":
+                        registro[i + 1] = "Incompleto";
                         break;
                     default: registro[i + 1] = Validate.Texto("Tipo de dato invalido, por default podra asignar cualquier dato.\nTenga en cuenta que la validacion sera incorrecta."); 
                         break; 
@@ -151,8 +151,19 @@ internal class ArchiveManipulation
     // Ordena las lineas por ID
     public void OrderLinesByID()
     {
+        Dictionary<int, string> ordenar;
+        Console.WriteLine("1) Ordenar por ID Ascendente");
+        Console.WriteLine("2) Ordenar por ID Descendente");
+        int op = Validate.Entero(1, 2, "Ingrese una opcion");
         // Nuevo diciconario con todo ordenado
-        Dictionary<int, string> ordenar = this.DiccionarioLineas.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
+        if (op == 1)
+        {
+            ordenar = this.DiccionarioLineas.OrderBy(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
+        }
+        else
+        {
+            ordenar = this.DiccionarioLineas.OrderByDescending(x => x.Key).ToDictionary(x => x.Key, y => y.Value);
+        }
         // Array ordenado                               Vuelvo a unir la ID al Value, con el formato anterior.
         string[] arrayOrdenado = ordenar.Select(x => $"{x.Key};{x.Value}").ToArray();
         File.WriteAllLines(filePath, arrayOrdenado);
@@ -212,13 +223,13 @@ internal class ArchiveManipulation
                     datos[op] = Validate.Email("Ingrese el email");
                     break;
                 case "nota":
-                    datos[op] = Validate.Entero(1,10,"Ingrese la nota").ToString();
+                    datos[op] = Validate.Flotante(1.0f, 10, "Ingrese la nota").ToString();
                     break;
                 case "edad":
                     datos[op] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
                     break;
                 case "precio":
-                    datos[op] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
+                    datos[op] = Validate.Flotante(0.0f, 99999.0f, "Ingrese el precio del producto").ToString();
                     break;
                 case "stock":
                     datos[op] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();

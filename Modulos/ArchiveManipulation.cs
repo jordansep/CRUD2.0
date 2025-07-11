@@ -12,13 +12,15 @@ internal class ArchiveManipulation
 {
     // TODO: NombrarArchivos
     // TODO: Modificacion de datos --
-    // TODO: Tipos de datos que reciben.
+    // TODO: Tipos de datos que reciben. --
     // Ej: al poner 4 datos, especificar que tipo de datos van a recibir cada uno
     // Nombre(string): Jordan, Email(email): jordanmonier4@gmail.com, edad(numero): 24
     // Entonces al modificar los datos, pedir el tipo de dato necesario.
+
     // Obtenemos los datos necesarios para comenzar a trabajar con archivos.
     protected string folderPath = ManipulationPath.folderPath;
     protected string filePath = ManipulationPath.filePath;
+    protected string secondFilePath = ManipulationPath.secondFilePath;
     // Las lineas se agregaran en formato |id;dato;dato;dato;dato|
     protected string[] lines
     {
@@ -27,7 +29,7 @@ internal class ArchiveManipulation
     // Todos los ejercicios me solicitan ID, ademas siempre es bueno tener un identificador unico
     private int id;
     private Dictionary<int, string> DiccionarioLineas = new Dictionary<int, string>();
-    private string[] DataTipes;
+    protected string[] DataTipes;
     public ArchiveManipulation(string DataTipes) {
         this.DataTipes = DataTipes.ToLower().Split(',');
         LlenarDiccionario();
@@ -36,17 +38,18 @@ internal class ArchiveManipulation
 
     // Este metodo funciona, pero para pedir datos especificos como por ej: Email, Numeros, no podra ser validado desde aqui.
     // Por lo tanto tendremos que sobreescribirlo en las subclases
-    public void AddRegister()
+    public virtual void AddRegister()
     {
+        
         // Sumamos uno ya que la ID ya esta contada.
         // Inicializamos con un array de tamaño cantDatos
         string[] registro = new string[this.DataTipes.Length + 1];
         // El primer dato es la ID asi que no la pedimos
         registro[0] = GetUniqueID().ToString();
         // mientras que los siguientes datos los tendra que ingresar el usuario.
-
         for (int i = 0; i < this.DataTipes.Length; i++)
         {
+            // Controlamos que el tipo de dato a pedir coincida con su posicion pasada al constructor.
                 string currentDateTipe = this.DataTipes[i].Trim();
                 switch (currentDateTipe)
                 {
@@ -62,8 +65,17 @@ internal class ArchiveManipulation
                     case "edad":
                         registro[i + 1] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
                         break;
-                    default: registro[i + 1] = Validate.Texto("Estamos aca"); 
+                    case "precio":
+                        registro[i + 1] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
                         break;
+                    case "stock":
+                        registro[i + 1] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
+                        break;
+                    case "asistencia": 
+                        registro[i + 1] ="Ausente"; 
+                        break;
+                    default: registro[i + 1] = Validate.Texto("Tipo de dato invalido, por default podra asignar cualquier dato.\nTenga en cuenta que la validacion sera incorrecta."); 
+                        break; 
                 }
         }
             string newLine = string.Join(";", registro);
@@ -175,11 +187,12 @@ internal class ArchiveManipulation
         // Trae el registro relacionado al ID
         string registro = this.DiccionarioLineas[id];
         string[] datos = registro.Split(';');
-        // Imprime para mostrarlo como opciones
+            // Si no tiene el tamaño necesario, entonces le hacemos un resize.
         if (datos.Length < this.DataTipes.Length)
         {
             Array.Resize(ref datos, this.DataTipes.Length);
         }
+        // Imprime para mostrarlo como opciones
         for (int i = 0; i < this.DataTipes.Length; i++) {
             if (datos[i] == null)
             {
@@ -187,8 +200,8 @@ internal class ArchiveManipulation
             }
             else Console.WriteLine($"{i + 1}) {datos[i]} ");
         }
-
-        int op = Validate.Entero(1,this.DataTipes.Length,"Que dato desea modificar?") - 1;
+        // Validamos que los datos coincidan con los pedidos por el usuario.
+            int op = Validate.Entero(1,this.DataTipes.Length,"Que dato desea modificar?") - 1;
             string currentDateTipe = this.DataTipes[op].Trim();
             switch (currentDateTipe)
             {
@@ -198,11 +211,23 @@ internal class ArchiveManipulation
                 case "email":
                     datos[op] = Validate.Email("Ingrese el email");
                     break;
-                case "entero":
-                    datos[op] = Validate.Entero("Ingrese un numero").ToString();
+                case "nota":
+                    datos[op] = Validate.Entero(1,10,"Ingrese la nota").ToString();
                     break;
                 case "edad":
                     datos[op] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
+                    break;
+                case "precio":
+                    datos[op] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
+                    break;
+                case "stock":
+                    datos[op] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
+                    break;
+                case "asistencia":
+                    datos[op] = datos[op] == "Ausente" ? "Presente" : "Ausente";
+                    break;
+                case "estado":
+                    datos[op] = datos[op] == "Incompleto" ? "Completo" : "Incompleto";
                     break;
                 default:
                     datos[op] = Validate.Texto("Estamos aca");
@@ -214,5 +239,4 @@ internal class ArchiveManipulation
         string[] registroActualizado = DiccionarioLineas.Select(x => $"{x.Key};{x.Value}").ToArray();
         File.WriteAllLines(filePath, registroActualizado);
     }
-    
 }

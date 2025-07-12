@@ -16,10 +16,13 @@ interface IAsistencia
 
 class Asistencia : ArchiveManipulation, IAsistencia
 {
+    // private Dictionary<int, string> secondDicctionaryLines;
     public Asistencia(string DateTipes) : base(DateTipes)
     {
         this.DataTipes = DateTipes.ToLower().Split(',');
+        LlenarDiccionario();
     }
+
 
     public override void AddRegister()
     {
@@ -123,7 +126,8 @@ class Asistencia : ArchiveManipulation, IAsistencia
         Console.WriteLine("4) Modificar Registro");
         Console.WriteLine("5) Buscar registro de asistencias en una fecha.");
         Console.WriteLine("6) Ordenar Registros ");
-        int opciones = Validate.Entero("Ingrese una opcion");
+        Console.WriteLine("7) Salir.");
+        int opciones = Validate.Entero(1,7,"Ingrese una opcion");
         switch (opciones)
         {
             case 1:
@@ -141,6 +145,7 @@ class Asistencia : ArchiveManipulation, IAsistencia
             case 5: ShowLines(Validate.Fecha()); 
                 break;
             case 6: dataBase.OrderLines(); break;
+            case 7: return;
         }
     }
 }

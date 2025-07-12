@@ -7,9 +7,10 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+// Borrar cualquiera de estos metodos podria romper una que otra funcion.
 public class Validate
 {
-    // TODO: Validaciones necesarias.
     public static string Texto(string msg = "Ingrese una cadena de texto")
         {
             bool esTexto = false;
@@ -229,4 +230,3 @@ public class Validate
         return fechaParseada.ToString("yyyy-MM-dd");
     }
 }
-        // TODO: Rango de enteros para seleccion de opciones.

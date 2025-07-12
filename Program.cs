@@ -12,7 +12,8 @@ namespace CRUD2._0
     {
         static void Main(string[] args)
         {
-            EjCatorce();
+            //EjDoce();
+             EjCatorce();
             // Validate.Fecha();
         }
         public static void EjOnce()
@@ -52,7 +53,9 @@ namespace CRUD2._0
             Console.WriteLine("2) Agregar Registro");
             Console.WriteLine("3) Modificar Registro");
             Console.WriteLine("4) Ordenar Registros ");
-            int opciones = Validate.Entero("Ingrese una opcion");
+            Console.WriteLine("5) Salir.");
+            int opciones = Validate.Entero(1,5,"Ingrese una opcion");
+            Console.Clear();
             switch (opciones)
             {
                 case 1:
@@ -64,7 +67,9 @@ namespace CRUD2._0
                 case 3:
                     dataBase.ModifyRegisterByID(Validate.Entero("Ingrese la ID donde desea modificar los datos"));
                     break;
-                case 4: dataBase.OrderLines(); break;
+                case 4: dataBase.OrderLines(); 
+                    break;
+                case 5: return;
             }
         }
     }

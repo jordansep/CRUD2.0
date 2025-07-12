@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 internal class ArchiveManipulation
 {
+    // TODO: Arreglar el GetUniqueID para las subclases ya que siempre devuelve 0
+    // TODO: Despues de completar una accion, volver al menu principal.
 
     // Obtenemos los datos necesarios para comenzar a trabajar con archivos.
     protected string folderPath = ManipulationPath.folderPath;
@@ -22,7 +24,7 @@ internal class ArchiveManipulation
     }
     // Todos los ejercicios me solicitan ID, ademas siempre es bueno tener un identificador unico
     private int id;
-    private Dictionary<int, string> DiccionarioLineas = new Dictionary<int, string>();
+    protected Dictionary<int, string> DiccionarioLineas = new Dictionary<int, string>();
     protected string[] DataTipes;
     public ArchiveManipulation(string DataTipes) {
         this.DataTipes = DataTipes.ToLower().Split(',');
@@ -124,6 +126,7 @@ internal class ArchiveManipulation
             int.TryParse(separar[0], out int id);
             // Añadimos la ID como key al diccionario y
             // luego volvemos a conectar los strings al array saltandonos la ID para pasarselo al Value
+            if (this.DiccionarioLineas.ContainsKey(id)) return;
             this.DiccionarioLineas.Add(id, string.Join(";", separar.Skip(1)));
         }
     }

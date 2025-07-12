@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 internal class ArchiveManipulation
 {
-    // TODO: Arreglar el GetUniqueID para las subclases ya que siempre devuelve 0
     // TODO: Despues de completar una accion, volver al menu principal.
 
     // Obtenemos los datos necesarios para comenzar a trabajar con archivos.
@@ -20,7 +19,7 @@ internal class ArchiveManipulation
     // Las lineas se agregaran en formato |id;dato;dato;dato;dato|
     protected string[] lines
     {
-        get { return File.ReadAllLines(filePath); }
+        get { return File.ReadAllLines(filePath);}
     }
     // Todos los ejercicios me solicitan ID, ademas siempre es bueno tener un identificador unico
     private int id;
@@ -82,6 +81,7 @@ internal class ArchiveManipulation
         }
             string newLine = string.Join(";", registro);
             File.AppendAllText(this.filePath, newLine + Environment.NewLine);
+            LlenarDiccionario();
     }
     // Cambia el nombre del archivo.
     public void ChangeFileName(string newName)
@@ -112,13 +112,18 @@ internal class ArchiveManipulation
             }
             Console.WriteLine();
         }
+            LlenarDiccionario();
     }
     // Llena un diccionario que luego sera usado
     // para operaciones donde necesitemos buscar usuarios por ID.
     protected void LlenarDiccionario()
     {
+        DiccionarioLineas.Clear();
         // Si lines[] esta vacio entonces termina la ejecucion para evitar problemas
-        if (lines == null || !lines.Any()) return; 
+        if (lines == null || !lines.Any()) {
+            this.id = 1;
+            return; 
+        }; 
         foreach (var item in this.lines)
         {
             string[] separar = item.Split(';');
@@ -149,7 +154,11 @@ internal class ArchiveManipulation
         this.DiccionarioLineas.Remove(id);
         // Vuelve a convertir el diccionario en array con el formato anterior
         string[] array = this.DiccionarioLineas.Select(x => $"{x.Key};{x.Value}").ToArray();
-        File.WriteAllLines(filePath, array);
+        if (!File.Exists(secondFilePath))
+        {
+            File.WriteAllLines(filePath, array);
+        } else File.WriteAllLines(secondFilePath, array);
+        LlenarDiccionario();
     }
     // Ordena las lineas por ID
     public void OrderLinesByID()
@@ -252,5 +261,6 @@ internal class ArchiveManipulation
         // Actualizo el registro.
         string[] registroActualizado = DiccionarioLineas.Select(x => $"{x.Key};{x.Value}").ToArray();
         File.WriteAllLines(filePath, registroActualizado);
+        LlenarDiccionario();
     }
 }

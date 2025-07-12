@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
 
 // Feature is not available. Use newer language version.
 interface IAsistencia
@@ -87,6 +88,7 @@ class Asistencia : ArchiveManipulation, IAsistencia
         }
         File.WriteAllLines(this.filePath, secondFileLines);
         Console.WriteLine("\n--- Asistencia tomada correctamente ---");
+        LlenarDiccionario();
     }
     public void ShowLines(string specificDate)
     {
@@ -118,7 +120,10 @@ class Asistencia : ArchiveManipulation, IAsistencia
     }
     public void Mostrar(Asistencia dataBase)
     {
-        Console.WriteLine($"Registro de Asistencias del dia {DateTime.UtcNow.ToString("yyyy-MM-dd")}");
+        int opciones;
+        do
+        {
+            Console.WriteLine($"Registro de Asistencias del dia {DateTime.UtcNow.ToString("yyyy-MM-dd")}");
         dataBase.ShowLines();
         Console.WriteLine("1) Eliminar por ID");
         Console.WriteLine("2) Agregar Registro");
@@ -127,7 +132,7 @@ class Asistencia : ArchiveManipulation, IAsistencia
         Console.WriteLine("5) Buscar registro de asistencias en una fecha.");
         Console.WriteLine("6) Ordenar Registros ");
         Console.WriteLine("7) Salir.");
-        int opciones = Validate.Entero(1,7,"Ingrese una opcion");
+        opciones = Validate.Entero(1,7,"Ingrese una opcion");
         switch (opciones)
         {
             case 1:
@@ -147,6 +152,10 @@ class Asistencia : ArchiveManipulation, IAsistencia
             case 6: dataBase.OrderLines(); break;
             case 7: return;
         }
+            Console.WriteLine("Presione cualquier tecla para continuar...");
+            Console.ReadKey(); // Pause to let the user see the output
+            Console.Clear();
+        } while (opciones != 7);
     }
 }
 

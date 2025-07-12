@@ -12,8 +12,9 @@ namespace CRUD2._0
     {
         static void Main(string[] args)
         {
+            EjOnce();
             //EjDoce();
-             EjCatorce();
+             // EjCatorce();
             // Validate.Fecha();
         }
         public static void EjOnce()
@@ -48,29 +49,39 @@ namespace CRUD2._0
         }
         public static void Mostrar(ArchiveManipulation dataBase)
         {
-            dataBase.ShowLines();
-            Console.WriteLine("1) Eliminar por ID");
-            Console.WriteLine("2) Agregar Registro");
-            Console.WriteLine("3) Modificar Registro");
-            Console.WriteLine("4) Ordenar Registros ");
-            Console.WriteLine("5) Salir.");
-            int opciones = Validate.Entero(1,5,"Ingrese una opcion");
-            Console.Clear();
-            switch (opciones)
+            int opciones;
+            do
             {
-                case 1:
-                    dataBase.EliminarID(Validate.Entero("Ingrese la ID"));
-                    break;
-                case 2:
-                    dataBase.AddRegister();
-                    break;
-                case 3:
-                    dataBase.ModifyRegisterByID(Validate.Entero("Ingrese la ID donde desea modificar los datos"));
-                    break;
-                case 4: dataBase.OrderLines(); 
-                    break;
-                case 5: return;
-            }
+                dataBase.ShowLines();
+                Console.WriteLine("1) Eliminar por ID");
+                Console.WriteLine("2) Agregar Registro");
+                Console.WriteLine("3) Modificar Registro");
+                Console.WriteLine("4) Ordenar Registros ");
+                Console.WriteLine("5) Salir.");
+                opciones = Validate.Entero(1, 5, "Ingrese una opcion");
+                Console.Clear();
+                switch (opciones)
+                {
+                    case 1:
+                        dataBase.EliminarID(Validate.Entero("Ingrese la ID"));
+                        break;
+                    case 2:
+                        dataBase.AddRegister();
+                        break;
+                    case 3:
+                        dataBase.ModifyRegisterByID(Validate.Entero("Ingrese la ID donde desea modificar los datos"));
+                        break;
+                    case 4:
+                        dataBase.OrderLines();
+                        break;
+                    case 5: Console.WriteLine("Saliendo del menu..."); break;
+
+                }
+                
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey(); // Pause to let the user see the output
+                Console.Clear();
+            } while (opciones != 5);
         }
     }
 }

@@ -33,6 +33,41 @@ internal class ArchiveManipulation
 
     // Este metodo funciona, pero para pedir datos especificos como por ej: Email, Numeros, no podra ser validado desde aqui.
     // Por lo tanto tendremos que sobreescribirlo en las subclases
+    protected string GetDataTipe(string dataTipe)
+    {
+        switch (dataTipe.Trim())
+        {
+            case "nombre":
+                return Validate.Texto("Ingrese el nombre");
+            case "email":
+                return Validate.Email("Ingrese el email");
+                
+            case "nota":
+                return Validate.Flotante(1.0f, 10, "Ingrese la nota").ToString();
+                
+            case "entero":
+                return Validate.Entero("Ingrese un numero").ToString();
+                
+            case "edad":
+                return Validate.Entero(0, 110, "Ingrese la edad").ToString();
+                
+            case "precio":
+                return Validate.Flotante(0.0f, 99999.0f, "Ingrese el precio del producto").ToString();
+                
+            case "stock":
+                return Validate.Entero(0, 9999999, "Ingrese la cantidad de stock del producto").ToString();
+                
+            case "asistencia":
+                return "Ausente";
+                
+            case "estado":
+                return "Incompleto";
+                
+            default:
+                return Validate.Texto("Tipo de dato invalido, por default podra asignar cualquier dato.\nTenga en cuenta que la validacion sera incorrecta.");
+                
+        }
+    }
     public virtual void AddRegister()
     {
         
@@ -45,39 +80,7 @@ internal class ArchiveManipulation
         for (int i = 0; i < this.DataTipes.Length; i++)
         {
             // Controlamos que el tipo de dato a pedir coincida con su posicion pasada al constructor.
-                string currentDateTipe = this.DataTipes[i].Trim();
-                switch (currentDateTipe)
-                {
-                    case "nombre":
-                        registro[i + 1] = Validate.Texto("Ingrese el nombre");
-                        break;
-                    case "email":
-                        registro[i + 1] = Validate.Email("Ingrese el email");
-                        break;
-                    case "nota":
-                        registro[i + 1] = Validate.Flotante(1.0f, 10, "Ingrese la nota").ToString();
-                        break;
-                    case "entero":
-                        registro[i + 1] = Validate.Entero("Ingrese un numero").ToString();
-                        break;
-                    case "edad":
-                        registro[i + 1] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
-                        break;
-                    case "precio":
-                        registro[i + 1] = Validate.Flotante(0.0f, 99999.0f, "Ingrese el precio del producto").ToString();
-                        break;
-                    case "stock":
-                        registro[i + 1] = Validate.Entero(0, 9999999, "Ingrese la cantidad de stock del producto").ToString();
-                        break;
-                    case "asistencia": 
-                        registro[i + 1] ="Ausente"; 
-                        break;
-                    case "estado":
-                        registro[i + 1] = "Incompleto";
-                        break;
-                    default: registro[i + 1] = Validate.Texto("Tipo de dato invalido, por default podra asignar cualquier dato.\nTenga en cuenta que la validacion sera incorrecta."); 
-                        break; 
-                }
+            registro[i + 1] = GetDataTipe(this.DataTipes[i]);
         }
             string newLine = string.Join(";", registro);
             File.AppendAllText(this.filePath, newLine + Environment.NewLine);
@@ -225,37 +228,8 @@ internal class ArchiveManipulation
         }
         // Validamos que los datos coincidan con los pedidos por el usuario.
             int op = Validate.Entero(1,this.DataTipes.Length,"Que dato desea modificar?") - 1;
-            string currentDateTipe = this.DataTipes[op].Trim();
-            switch (currentDateTipe)
-            {
-                case "nombre":
-                    datos[op] = Validate.Texto("Ingrese el nombre");
-                    break;
-                case "email":
-                    datos[op] = Validate.Email("Ingrese el email");
-                    break;
-                case "nota":
-                    datos[op] = Validate.Flotante(1.0f, 10, "Ingrese la nota").ToString();
-                    break;
-                case "edad":
-                    datos[op] = Validate.Entero(0, 110, "Ingrese la edad").ToString();
-                    break;
-                case "precio":
-                    datos[op] = Validate.Flotante(0.0f, 99999.0f, "Ingrese el precio del producto").ToString();
-                    break;
-                case "stock":
-                    datos[op] = Validate.Entero(0, 9999999, "Ingrese el precio del producto").ToString();
-                    break;
-                case "asistencia":
-                    datos[op] = datos[op] == "Ausente" ? "Presente" : "Ausente";
-                    break;
-                case "estado":
-                    datos[op] = datos[op] == "Incompleto" ? "Completo" : "Incompleto";
-                    break;
-                default:
-                    datos[op] = Validate.Texto("Estamos aca");
-                    break;
-            }
+            string currentDateTipe = GetDataTipe(this.DataTipes[op]);
+        datos[op] = currentDateTipe;
         registro = string.Join(";", datos);
         this.DiccionarioLineas[id] = registro;
         // Actualizo el registro.

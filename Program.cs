@@ -12,10 +12,7 @@ namespace CRUD2._0
     {
         static void Main(string[] args)
         {
-            EjOnce();
-            //EjDoce();
-             // EjCatorce();
-            // Validate.Fecha();
+            Mostrar();
         }
         public static void EjOnce()
         {
@@ -47,6 +44,45 @@ namespace CRUD2._0
             ArchiveManipulation Quince = new ArchiveManipulation("nombre,nota,nota,nota");
             Mostrar(Quince);
         }
+        public static void Mostrar()
+        {
+            int opciones;
+            do
+            {
+                Console.WriteLine("1) Ejercicio Once");
+                Console.WriteLine("2) Ejercicio Doce");
+                Console.WriteLine("3) Ejercicio Trece");
+                Console.WriteLine("4) Ejercicio Catorce");
+                Console.WriteLine("5) Ejercicio Quince.");
+                Console.WriteLine("6) Salir.");
+                opciones = Validate.Entero(1, 5, "Ingrese una opcion");
+                Console.Clear();
+                switch (opciones)
+                {
+                    case 1:
+                        EjOnce();
+                        break;
+                    case 2:
+                        EjDoce();
+                        break;
+                    case 3:
+                        EjTrece();
+                        break;
+                    case 4:
+                        EjCatorce();
+                        break;
+                    case 5:
+                        EjQuince();
+                        break;
+                    case 6: Console.WriteLine("Saliendo del menu..."); break;
+
+                }
+                Console.WriteLine("Presione cualquier tecla para continuar...");
+                Console.ReadKey(); // Pause to let the user see the output
+                Console.Clear();
+            } while (opciones != 6);
+        }
+
         public static void Mostrar(ArchiveManipulation dataBase)
         {
             int opciones;
@@ -57,9 +93,9 @@ namespace CRUD2._0
                 Console.WriteLine("2) Agregar Registro");
                 Console.WriteLine("3) Modificar Registro");
                 Console.WriteLine("4) Ordenar Registros ");
-                Console.WriteLine("5) Salir.");
+                Console.WriteLine("5) Volver al menu principal.");
+                Console.WriteLine("6) Salir.");
                 opciones = Validate.Entero(1, 5, "Ingrese una opcion");
-                Console.Clear();
                 switch (opciones)
                 {
                     case 1:
@@ -74,14 +110,14 @@ namespace CRUD2._0
                     case 4:
                         dataBase.OrderLines();
                         break;
-                    case 5: Console.WriteLine("Saliendo del menu..."); break;
+                    case 5: Mostrar(); break;
+                    case 6: Console.WriteLine("Saliendo del menu..."); break;
 
                 }
-                
                 Console.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey(); // Pause to let the user see the output
                 Console.Clear();
-            } while (opciones != 5);
+            } while (opciones != 6);
         }
     }
 }

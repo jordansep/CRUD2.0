@@ -13,6 +13,7 @@ interface IAsistencia
     void Asist();
     void AddRegister();
     void Mostrar(Asistencia database);
+    void ShowLines(string specificDate);
 } 
 
 class Asistencia : ArchiveManipulation, IAsistencia

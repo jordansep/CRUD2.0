@@ -112,7 +112,6 @@ namespace CRUD2._0
                         break;
                     case 5: Mostrar(); break;
                     case 6: Console.WriteLine("Saliendo del menu..."); break;
-
                 }
                 Console.WriteLine("Presione cualquier tecla para continuar...");
                 Console.ReadKey(); // Pause to let the user see the output
